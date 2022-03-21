@@ -9,17 +9,19 @@ int main() {
     srand((unsigned) time(&t));
 
     /* Initialize variables */
-    int quantum = rand() % 10 + 1; // Make quantum a random number from 1 to 10
     int numProcesses = rand() % 5 + 3; // Make num_processes a random number from 3 to 7
+    int quantum = rand() % numProcesses + 1; // Make quantum a random number from 1 to numProcesses
     int burstTimes[numProcesses]; // Set process variable to equal to number of processes
     int arrivalTimes[numProcesses]; // Create arrival times
     int temp[numProcesses]; // Temporary array for functional purposes
     int remaining = numProcesses; // set remaining processes to the total number of processes
-    int i, total, waitTime, turnaroundTime = 0; // functional purposes
+    int i, total, turnaroundTime = 0; // functional purposes
+    int waitTime = 0;
 
     /*  Fill arrays with random data */
     for (int i = 0; i < numProcesses; i++) {
         burstTimes[i] = rand() % 20 + 1; // Assign random numbers to process between 1 and 20
+        temp[i] = burstTimes[i];
     }
     for (int i = 0; i < numProcesses; i++) {
         arrivalTimes[i] = rand() % numProcesses + 1; // Make processes arrive at a number between 1 and the total number of processes
@@ -30,23 +32,23 @@ int main() {
         int completed;
 
         /* Case 1: burst time is less than quantum time */
-        if (burstTimes[i] <= quantum && burstTimes[i] > 0) {
-            total += burstTimes[i]; // Add remainder of burst times to total time elapsed
-            burstTimes[i] = 0;
+        if (temp[i] <= quantum & temp[i] > 0) {
+            total += temp[i]; // Add remainder of burst times to total time elapsed
+            temp[i] = 0;
             completed = 1;
 
         /* Case 2: burst time is not empty, and also greater than the quantum time*/
-        } else if (burstTimes[i] > 0) {
-            burstTimes[i] -= quantum;
+        } else if (temp[i] > 0) {
+            temp[i] -= quantum;
             total += quantum;
         }
 
         /* Case 3: process is completed */
-        if(burstTimes[i] == 0 && completed == 1) {
+        if(temp[i] == 0 && completed == 1) {
             remaining--; // There is 1 less process remaining
-            printf("Process %d completed\n", i + 1);
+            printf("Process %d completed, Burst time %d, arrival time %d, total time %d\n", i + 1, burstTimes[i], arrivalTimes[i], total);
             completed = 0;
-            waitTime += total - arrivalTimes[i];// - burstTimes[i];
+            waitTime += total - arrivalTimes[i] - burstTimes[i];
             turnaroundTime += total - arrivalTimes[i];
         }
         if (i == numProcesses - 1) {
