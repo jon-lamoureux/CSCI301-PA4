@@ -15,7 +15,7 @@ int main() {
     int arrivalTimes[numProcesses]; // Create arrival times
     int temp[numProcesses]; // Temporary array for functional purposes
     int remaining = numProcesses; // set remaining processes to the total number of processes
-    int i, total = 0; // functional purposes
+    int i, total, waitTime, turnaroundTime = 0; // functional purposes
 
     /*  Fill arrays with random data */
     for (int i = 0; i < numProcesses; i++) {
@@ -46,6 +46,8 @@ int main() {
             remaining--; // There is 1 less process remaining
             printf("Process %d completed\n", i + 1);
             completed = 0;
+            waitTime += total - arrivalTimes[i];// - burstTimes[i];
+            turnaroundTime += total - arrivalTimes[i];
         }
         if (i == numProcesses - 1) {
             i = 0; // Reset the counter
@@ -58,6 +60,8 @@ int main() {
 
     printf("### Round Robin Scheduling ###\n");
     printf("Time Quantum is: %d\n", quantum);
-    printf("Number of Processes: %d", numProcesses);
+    printf("Number of Processes: %d\n", numProcesses);
+    printf("Average Waiting Time = %f\n", waitTime * 1.0 / numProcesses);
+    printf("Avg Turnaround Time = %f", turnaroundTime * 1.0 / numProcesses);
     return 0;
 }
