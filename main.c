@@ -2,6 +2,8 @@
 /* Attributions: https://www.thecrazyprogrammer.com/2015/09/round-robin-scheduling-program-in-c.html */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 
 int main() {
     /* Create random generator */
@@ -12,52 +14,58 @@ int main() {
     int numProcesses = rand() % 5 + 3; // Make num_processes a random number from 3 to 7
     int quantum = rand() % numProcesses + 1; // Make quantum a random number from 1 to numProcesses
     int burstTimes[numProcesses]; // Set process variable to equal to number of processes
-    int arrivalTimes[numProcesses]; // Create arrival times
+    // int arrivalTimes[numProcesses]; // Create arrival times
     int temp[numProcesses]; // Temporary array for functional purposes
     int remaining = numProcesses; // set remaining processes to the total number of processes
-    int i, total, turnaroundTime = 0; // functional purposes
+    int i, j, min, total, turnaroundTime = 0; // functional purposes
     int waitTime = 0;
-
+    struct Processes *ptr;
     /*  Fill arrays with random data */
     for (int i = 0; i < numProcesses; i++) {
         burstTimes[i] = rand() % 20 + 1; // Assign random numbers to process between 1 and 20
         temp[i] = burstTimes[i];
     }
-    for (int i = 0; i < numProcesses; i++) {
-        arrivalTimes[i] = rand() % numProcesses + 1; // Make processes arrive at a number between 1 and the total number of processes
-    }
+
+    /* Sort temp i by queue priority */
 
     /* Round Robin function */
     for (total = 0, i = 0; remaining != 0;) {
         int completed;
 
-        /* Case 1: burst time is less than quantum time */
-        if (temp[i] <= quantum & temp[i] > 0) {
-            total += temp[i]; // Add remainder of burst times to total time elapsed
-            temp[i] = 0;
-            completed = 1;
+        // if (arrivalTimes[i] <= total) {
+            /* Case 1: burst time is less than quantum time */
+            if (temp[i] <= quantum & temp[i] > 0) {
+                total += temp[i]; // Add remainder of burst times to total time elapsed
+                temp[i] = 0;
+                completed = 1;
+                /* Case 2: burst time is not empty, and also greater than the quantum time*/
+                printf("P%d, %d\n", i+1, total);
+            } else if (temp[i] > 0) {
+                temp[i] -= quantum;
+                total += quantum;
+                printf("P%d, %d\n", i+1, total);
+            }
 
-        /* Case 2: burst time is not empty, and also greater than the quantum time*/
-        } else if (temp[i] > 0) {
-            temp[i] -= quantum;
-            total += quantum;
-        }
-
-        /* Case 3: process is completed */
-        if(temp[i] == 0 && completed == 1) {
-            remaining--; // There is 1 less process remaining
-            printf("Process %d completed, Burst time %d, arrival time %d, total time %d\n", i + 1, burstTimes[i], arrivalTimes[i], total);
-            completed = 0;
-            waitTime += total - arrivalTimes[i] - burstTimes[i];
-            turnaroundTime += total - arrivalTimes[i];
-        }
-        if (i == numProcesses - 1) {
-            i = 0; // Reset the counter
-        } else if (arrivalTimes[i + 1] <= total) {
-            i++; // If the current process hasn't arrived yet, go to the next one
-        } else {
+            /* Case 3: process is completed */
+            if (temp[i] == 0 && completed == 1) {
+                remaining--; // There is 1 less process remaining
+                printf("Process P%d completed, Burst time %d, arrival time %d, total time %d\n", i + 1, burstTimes[i],
+                       0, total);
+                completed = 0;
+                waitTime += total - 0 - burstTimes[i];
+                turnaroundTime += total - 0;
+            }
+            if (i == numProcesses - 1) {
+                i = 0; // Reset the counter
+            } else {
+                i++;
+            }
+        /*} else if (i == numProcesses - 1) {
             i = 0;
-        }
+            total += 1;
+        } else {
+            i++;
+        }*/
     }
 
     printf("### Round Robin Scheduling ###\n");
