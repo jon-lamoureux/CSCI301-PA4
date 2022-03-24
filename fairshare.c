@@ -14,6 +14,7 @@ int main() {
     int realProcesses[numUsers];
     int quantum = rand() % numProcesses + 1; // Make quantum a random number from 1 to numProcesses
     int burstTimes[numUsers][numProcesses]; // Set process variable to equal to number of processes
+    int totalTimes[numUsers][numProcesses];
     // int arrivalTimes[numProcesses]; // Create arrival times
     int temp[numUsers][numProcesses], curr[numUsers], remaining; // Temporary array for functional purposes
     int i, j, min, total, turnaroundTime = 0; // functional purposes
@@ -32,65 +33,92 @@ int main() {
             if (realProcesses[i] > j) {
                 burstTimes[i][j] = rand() % 20 + 1; // Assign random numbers to process between 1 and 20
             } else {
-                burstTimes[i][j] = -1;
+                burstTimes[i][j] = 0;
             }
                 temp[i][j] = burstTimes[i][j];
         }
     }
     for (int i = 0; i < numUsers; i++) {
-        curr[i] = 0; // initalize current to be 0
+        for (int j = 0; j < numProcesses; j++) {
+            totalTimes[i][j] = 0;
+        }
     }
     for (int i = 0; i < numUsers; i++) {
-        printf("%d ", realProcesses[i]);
+        curr[i] = 0; // initalize current to be 0
+    }
+    printf("\t");
+    for (int i = 0; i < numProcesses; i++) {
+        printf("P%d\t", i+1);
+    }
+    printf("\n");
+    for (int i = 0; i < numUsers; i++) {
+        printf("U%d\t", i + 1);
         for (int j = 0; j < numProcesses; j++) {
-            printf("%d ", burstTimes[i][j]);
+            printf("%d\t", burstTimes[i][j]);
         }
         printf("\n");
     }
 
     /* Fair Share function */
-    for (total = 0, i = 0, j = curr[i]; remaining != 0;) {
+    for (total = 0, i = 0; remaining != 0;) {
         int completed;
-
-        /* Case 1: burst time is less than quantum time */
-        if (temp[i][j] <= quantum & temp[i][j] > 0) {
-            total += temp[i][j]; // Add remainder of burst times to total time elapsed
-            temp[i][j] = 0;
-            completed = 1;
-            /* Case 2: burst time is not empty, and also greater than the quantum time*/
-        } else if (temp[i][j] > 0) {
-            temp[i][j] -= quantum;
-            total += quantum;
+        int k = 0;
+        while (k < realProcesses[i]) {
+            if (curr[i] >= realProcesses[i]) {
+                curr[i] = 0;
+            }
+            if (temp[i][curr[i]] != 0) {
+                break;
+            }
+            curr[i] += 1;
+            k++;
         }
-
+        /* Case 1: burst time is less than quantum time */
+        if (temp[i][curr[i]] <= quantum & temp[i][curr[i]] > 0) {
+            total += temp[i][curr[i]]; // Add remainder of burst times to total time elapsed
+            temp[i][curr[i]] = 0;
+            completed = 1;
+            curr[i] += 1;
+            /* Case 2: burst time is not empty, and also greater than the quantum time*/
+        } else if (temp[i][curr[i]] > 0) {
+            temp[i][curr[i]] -= quantum;
+            total += quantum;
+            curr[i] += 1;
+        }
+        j = curr[i] - 1;
         /* Case 3: process is completed */
         if (temp[i][j] == 0 && completed == 1) {
-            printf("%d", remaining);
             remaining--; // There is 1 less process remaining
-            printf("Process P%d completed, Burst time %d, arrival time %d, total time %d\n", i + 1, burstTimes[i][j], 0, total);
+            //printf("Process U%dP%d completed, Burst time %d, arrival time %d, total time %d\n", i + 1, j + 1, burstTimes[i][j], 0, total);
             completed = 0;
             waitTime += total - 0 - burstTimes[i][j];
             turnaroundTime += total - 0;
-            curr[i] += 1;
+            totalTimes[i][j] = total;
         }
-        if (i == totalProcesses - 1) {
+        if (i == numUsers - 1) {
             i = 0; // Reset the counter
         } else {
             i++;
         }
-        /*} else if (i == numProcesses - 1) {
-            i = 0;
-            total += 1;
-        } else {
-            i++;
-        }*/
     }
-
     printf("### Fair Share Scheduling ###\n");
     printf("Time Quantum is: %d\n", quantum);
     printf("Number of users: %d\n", numUsers);
-    printf("Max Number of Processes: %d\n", numProcesses);
-    printf("Average Waiting Time = %f\n", waitTime * 1.0 / numProcesses);
-    printf("Avg Turnaround Time = %f", turnaroundTime * 1.0 / numProcesses);
+    printf("Number of Processes: %d\n", totalProcesses);
+    printf("Average Waiting Time = %f\n", waitTime * 1.0 / totalProcesses);
+    printf("Avg Turnaround Time = %f\n", turnaroundTime * 1.0 / totalProcesses);
+    printf("Individual Wait Times:\n");
+    printf("\t");
+    for (int i = 0; i < numProcesses; i++) {
+        printf("P%d\t", i+1);
+    }
+    printf("\n");
+    for (int i = 0; i < numUsers; i++) {
+        printf("U%d\t", i + 1);
+        for (int j = 0; j < numProcesses; j++) {
+            printf("%d\t", totalTimes[i][j]);
+        }
+        printf("\n");
+    }
     return 0;
 }
