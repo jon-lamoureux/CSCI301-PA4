@@ -31,7 +31,7 @@ int main() {
     for (int i = 0; i < numUsers; i++) {
         for (int j = 0; j < numProcesses; j++) {
             if (realProcesses[i] > j) {
-                burstTimes[i][j] = rand() % 20 + 1; // Assign random numbers to process between 1 and 20
+                burstTimes[i][j] = j + 1; // Assign random numbers to process between 1 and 20 rand() % 20 + 1
             } else {
                 burstTimes[i][j] = 0;
             }
@@ -62,8 +62,8 @@ int main() {
     /* Fair Share function */
     for (total = 0, i = 0; remaining != 0;) {
         int completed;
-        int k = 0;
-        while (k < realProcesses[i]) {
+        int k, looped = 0;
+        while (looped != 1) {
             if (curr[i] >= realProcesses[i]) {
                 curr[i] = 0;
             }
@@ -72,6 +72,16 @@ int main() {
             }
             curr[i] += 1;
             k++;
+            if (k >= realProcesses[i]) {
+                if (i == numUsers - 1) {
+                    i = 0; // Reset the counter
+                } else {
+                    i++;
+                }
+                k=0;
+            } else {
+                looped = 1;
+            }
         }
         /* Case 1: burst time is less than quantum time */
         if (temp[i][curr[i]] <= quantum & temp[i][curr[i]] > 0) {
@@ -95,6 +105,7 @@ int main() {
             turnaroundTime += total - 0;
             totalTimes[i][j] = total;
         }
+        printf("(U%d-P%d, %d-%d=%d, T: %d)\n", i+1, j+1, burstTimes[i][j], quantum, temp[i][j], total);
         if (i == numUsers - 1) {
             i = 0; // Reset the counter
         } else {
@@ -107,7 +118,7 @@ int main() {
     printf("Number of Processes: %d\n", totalProcesses);
     printf("Average Waiting Time = %f\n", waitTime * 1.0 / totalProcesses);
     printf("Avg Turnaround Time = %f\n", turnaroundTime * 1.0 / totalProcesses);
-    printf("Individual Wait Times:\n");
+    printf("Individual Total Times:\n");
     printf("\t");
     for (int i = 0; i < numProcesses; i++) {
         printf("P%d\t", i+1);
