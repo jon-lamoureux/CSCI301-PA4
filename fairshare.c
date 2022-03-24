@@ -31,7 +31,7 @@ int main() {
     for (int i = 0; i < numUsers; i++) {
         for (int j = 0; j < numProcesses; j++) {
             if (realProcesses[i] > j) {
-                burstTimes[i][j] = j + 1; // Assign random numbers to process between 1 and 20 rand() % 20 + 1
+                burstTimes[i][j] = rand() % 20 + 1; // Assign random numbers to process between 1 and 20 rand() % 20 + 1
             } else {
                 burstTimes[i][j] = 0;
             }
@@ -105,7 +105,7 @@ int main() {
             turnaroundTime += total - 0;
             totalTimes[i][j] = total;
         }
-        printf("(U%d-P%d, %d-%d=%d, T: %d)\n", i+1, j+1, burstTimes[i][j], quantum, temp[i][j], total);
+        //printf("(U%d-P%d, %d-%d=%d, T: %d)\n", i+1, j+1, burstTimes[i][j], quantum, temp[i][j], total);
         if (i == numUsers - 1) {
             i = 0; // Reset the counter
         } else {

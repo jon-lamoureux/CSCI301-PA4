@@ -39,11 +39,9 @@ int main() {
                 temp[i] = 0;
                 completed = 1;
                 /* Case 2: burst time is not empty, and also greater than the quantum time*/
-                printf("P%d, %d\n", i+1, total);
             } else if (temp[i] > 0) {
                 temp[i] -= quantum;
                 total += quantum;
-                printf("P%d, %d\n", i+1, total);
             }
 
             /* Case 3: process is completed */
