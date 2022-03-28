@@ -39,7 +39,7 @@ int main() {
     srand((unsigned) time(&t));
 
     /* Initialize variables */
-    int numProcesses = rand() % 9 + 5; // Make the number of processes a number from 5 to 10
+    int num = rand() % 5 + 5; // Make the number of processes a number from 5 to 10
     int quantum1 = 2; // Make quantum1 2
     int quantum2 = 4; // Make quantum2 4
     int quantum3 = 6; // Make quantum3 6
@@ -48,21 +48,24 @@ int main() {
     int i4 = 0;
     int total = 0;
     int nextQueue = 1; // Determine whether or not the process continues executing the next queue
-
+    printf("%d\n", num);
     /*  Fill arrays with random data */
-    for (int i = 0; i < numProcesses; i++) {
+    for (int i = 0; i < num; i++) {
         queue1[i].pid = i + 1; // set pid
         queue1[i].burst = rand() % 20 + 1; // Assign random numbers to process between 1 and 20
-        queue1[i].arrival = rand() % numProcesses; // Make arrival time random number between 0 and number of Processes
+        queue1[i].arrival = rand() % num; // Make arrival time random number between 0 and number of Processes
         queue1[i].remaining = queue1[i].burst; // Remaining time is initialized to burst time
     }
 
     /* Sort the queue */
     sort();
     total = queue1[0].arrival; // Set the total time to start at the arrival time of the first processes
-
-    printf("\nProcess\t\tRemaining Time\tWait Time\tTurnaround Time\tCompleted Under\t");
-    for (int i = 0; i < numProcesses; i++) {
+    printf("\nProcess\t\tBurst Time\tArrival Time\t");
+    for (int i = 0; i < num; i++) {
+        printf("\nP%d\t\t%d\t\t%d", queue1[i].pid, queue1[i].burst, queue1[i].arrival);
+    }
+    printf("\n\nProcess\t\tRemaining Time\tWait Time\tTurnaround Time\tCompleted Under\t");
+    for (int i = 0; i < num; i++) {
         /* Case 1: Process is completed */
         if (queue1[i].remaining <= quantum1) {
             total+=queue1[i].remaining;
@@ -130,15 +133,15 @@ int main() {
     if (nextQueue != 4) return 0;
     for (int i = 0; i < i4; i++) {
         if (i == 0) {
-            queue4[i].time = queue4[i].burst + time - quantum1 - quantum2 - quantum3;
+            queue4[i].time = queue4[i].burst + total - quantum1 - quantum2 - quantum3;
         } else{
             queue4[i].time = queue4[i - 1].time + queue4[i].burst;
         }
     }
-    for(int i = 0; i < i4; i++) {
+    for (int i = 0; i < i4; i++) {
         queue4[i].turnaround = queue4[i].time;
         queue4[i].wait = queue4[i].turnaround - queue3[i].burst;
-        printf("\n%c\t\t%d\t\t%d\t\t%d\t\tFCFS", queue4[i].pid, queue4[i].burst, queue4[i].wait, queue4[i].turnaround);
+        printf("\nP%d\t\t%d\t\t%d\t\t%d\t\tFCFS", queue4[i].pid, queue4[i].burst, queue4[i].wait, queue4[i].turnaround);
     }
     return 0;
 }
