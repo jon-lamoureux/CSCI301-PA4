@@ -15,10 +15,33 @@ struct process
 } queue1[10], queue2[10], queue3[10], queue4[10];
 
 // https://www.tutorialspoint.com/c-program-to-sort-an-array-in-an-ascending-order
-int num;
-void sort()
-{
+
+
+int main() {
+    /* Create random generator */
+    time_t t;
+    srand((unsigned) time(&t));
+
+    /* Initialize variables */
+    int num = rand() % 5 + 5; // Make the number of processes a number from 5 to 10
     struct process temp; // temp has to be a struct instead of int
+    int quantum1 = 2; // Make quantum1 2
+    int quantum2 = 4; // Make quantum2 4
+    int quantum3 = 6; // Make quantum3 6
+    int i2 = 0;
+    int i3 = 0;
+    int i4 = 0;
+    int total = 0;
+    int nextQueue = 1; // Determine whether or not the process continues executing the next queue
+    /*  Fill arrays with random data */
+    for (int i = 0; i < num; i++) {
+        queue1[i].pid = i + 1; // set pid
+        queue1[i].burst = rand() % 20 + 1; // Assign random numbers to process between 1 and 20
+        queue1[i].arrival = rand() % num; // Make arrival time random number between 0 and number of Processes
+        queue1[i].remaining = queue1[i].burst; // Remaining time is initialized to burst time
+    }
+
+    /* Sort the queue */
     for(int i=0; i < num; i++)
     {
         for(int j= i + 1; j < num; j++)
@@ -30,36 +53,7 @@ void sort()
                 queue1[j]=temp;
             }
         }
-    }
-}
-
-int main() {
-    /* Create random generator */
-    time_t t;
-    srand((unsigned) time(&t));
-
-    /* Initialize variables */
-    int num = rand() % 5 + 5; // Make the number of processes a number from 5 to 10
-    int quantum1 = 2; // Make quantum1 2
-    int quantum2 = 4; // Make quantum2 4
-    int quantum3 = 6; // Make quantum3 6
-    int i2 = 0;
-    int i3 = 0;
-    int i4 = 0;
-    int total = 0;
-    int nextQueue = 1; // Determine whether or not the process continues executing the next queue
-    printf("%d\n", num);
-    /*  Fill arrays with random data */
-    for (int i = 0; i < num; i++) {
-        queue1[i].pid = i + 1; // set pid
-        queue1[i].burst = rand() % 20 + 1; // Assign random numbers to process between 1 and 20
-        queue1[i].arrival = rand() % num; // Make arrival time random number between 0 and number of Processes
-        queue1[i].remaining = queue1[i].burst; // Remaining time is initialized to burst time
-    }
-
-    /* Sort the queue */
-    sort();
-    total = queue1[0].arrival; // Set the total time to start at the arrival time of the first processes
+    }    total = queue1[0].arrival; // Set the total time to start at the arrival time of the first processes
     printf("\nProcess\t\tBurst Time\tArrival Time\t");
     for (int i = 0; i < num; i++) {
         printf("\nP%d\t\t%d\t\t%d", queue1[i].pid, queue1[i].burst, queue1[i].arrival);
