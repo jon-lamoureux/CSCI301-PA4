@@ -10,12 +10,11 @@ int main() {
 
     /* Initialize variables */
     int numUsers = rand() % 5 + 3; // Make numUsers a random number from 3 to 7
-    int numProcesses = rand() % 5 + 2; // Make numProcesses a random number from 1 to 4
+    int numProcesses = rand() % 5 + 1; // Make numProcesses a random number from 1 to 4
     int realProcesses[numUsers];
     int quantum = rand() % numProcesses + 1; // Make quantum a random number from 1 to numProcesses
     int burstTimes[numUsers][numProcesses]; // Set process variable to equal to number of processes
     int totalTimes[numUsers][numProcesses];
-    // int arrivalTimes[numProcesses]; // Create arrival times
     int temp[numUsers][numProcesses], curr[numUsers], remaining; // Temporary array for functional purposes
     int i, j, min, total, turnaroundTime = 0; // functional purposes
     int waitTime = 0;
@@ -31,7 +30,7 @@ int main() {
     for (int i = 0; i < numUsers; i++) {
         for (int j = 0; j < numProcesses; j++) {
             if (realProcesses[i] > j) {
-                burstTimes[i][j] = rand() % 5 + 1; // Assign random numbers to process between 1 and 20 rand() % 20 + 1
+                burstTimes[i][j] = rand() % 20 + 1; // Assign random numbers to process between 1 and 20 rand() % 20 + 1
             } else {
                 burstTimes[i][j] = 0;
             }
