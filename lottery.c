@@ -1,3 +1,4 @@
+/* Authors: Thomas Anderson and Jonathan Lamoureux */
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
