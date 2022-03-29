@@ -12,7 +12,6 @@ struct process
     int turnaround;
     int burst;
     int remaining;
-    int time;
 } queue1[10], queue2[10], queue3[10], queue4[10];
 
 int main() {
@@ -30,6 +29,8 @@ int main() {
     int i3 = 0;
     int i4 = 0;
     int total = 0;
+    int waitTime = 0;
+    int turnaround = 0;
     int nextQueue = 1; // Determine whether or not the process continues executing the next queue
 
     /*  Fill arrays with random data */
@@ -69,6 +70,8 @@ int main() {
             queue1[i].wait = total - queue1[i].arrival - queue1[i].burst;
             queue1[i].turnaround = total - queue1[i].arrival;
             printf("\nP%d\t\t%d\t\t%d\t\tRR1", queue1[i].pid, queue1[i].wait, queue1[i].turnaround);
+            waitTime += queue1[i].wait;
+            turnaround += queue1[i].turnaround;
         }
         /* Case 2: Process cannot be completed within time quantum */
         else {
@@ -88,9 +91,11 @@ int main() {
         if (queue2[i].remaining <= quantum2) {
             total += queue2[i].remaining;
             queue2[i].remaining = 0;
-            queue2[i].wait = total - queue2[i].arrival - queue2[i].burst;
+            queue2[i].wait = total - quantum1 - queue2[i].burst;
             queue2[i].turnaround = total - queue2[i].arrival;
             printf("\nP%d\t\t%d\t\t%d\t\tRR2", queue2[i].pid, queue2[i].wait, queue2[i].turnaround);
+            waitTime += queue2[i].wait;
+            turnaround += queue2[i].turnaround;
         }
         /* Case 2: Process cannot be completed within time quantum */
         else {
@@ -110,9 +115,11 @@ int main() {
         if (queue3[i].remaining <= quantum3) {
             total += queue3[i].remaining;
             queue3[i].remaining = 0;
-            queue3[i].wait = total - queue3[i].arrival - queue3[i].burst;
+            queue3[i].wait = total - quantum2 - quantum1 -  queue3[i].burst;
             queue3[i].turnaround = total - queue3[i].arrival;
             printf("\nP%d\t\t%d\t\t%d\t\tRR3", queue3[i].pid, queue3[i].wait, queue3[i].turnaround);
+            waitTime += queue3[i].wait;
+            turnaround += queue3[i].turnaround;
         }
         /* Case 2: Process cannot be completed within time quantum */
         else {
@@ -128,16 +135,14 @@ int main() {
     }
     if (nextQueue != 4) return 0;
     for (int i = 0; i < i4; i++) {
-        if (i == 0) {
-            queue4[i].time = queue4[i].burst + total - quantum1 - quantum2 - quantum3;
-        } else{
-            queue4[i].time = queue4[i - 1].time + queue4[i].burst;
-        }
-    }
-    for (int i = 0; i < i4; i++) {
-        queue4[i].turnaround = queue4[i].time;
-        queue4[i].wait = queue4[i].turnaround - queue3[i].burst;
+        queue4[i].turnaround = queue4[i].burst + total;
+        total += queue4[i].burst;
+        queue4[i].wait = queue4[i].turnaround - queue4[i].burst - quantum1 - quantum2 - quantum3;
+        turnaround += queue4[i].turnaround;
+        waitTime += queue4[i].wait;
         printf("\nP%d\t\t%d\t\t%d\t\tFCFS", queue4[i].pid, queue4[i].wait, queue4[i].turnaround);
     }
+    printf("\n\nAverage wait time: %d", (waitTime / num));
+    printf("\nAverage Turnaround Time: %d", (turnaround / num));
     return 0;
 }
